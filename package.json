@@ -6,7 +6,7 @@
     "license": "MIT",
     "scripts": {
         "build": "babel src -d lib",
-        "dev": "nodemon --exec babel-node -- src/app.js"
+        "dev": "nodemon --exec babel-node -- src/index.js"
     },
     "devDependencies": {
         "@babel/cli": "^7.12.10",

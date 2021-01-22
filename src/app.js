@@ -7,7 +7,16 @@ const app = polka();
 
 app.use(statusSend).use(jsonSend);
 
-const apiSrc = `${__dirname}/api/`;
+let srcName = "api";
+
+/**
+ * prevent folder error
+ */
+if (!srcName.endsWith("/")) {
+    srcName = srcName + "/";
+}
+
+const apiSrc = `${__dirname}/${srcName}`;
 
 const scanAndLoad = (apiSrc) => {
     fs.readdir(apiSrc, (err, files) => {
@@ -53,12 +62,14 @@ const scanAndLoad = (apiSrc) => {
                         throw new Error("No routes found");
                     }
                     /**
-                     * pass route informations to route
+                     * get folder tree informations
                      */
-                    const folderName = apiSrc
-                        .substr(0, apiSrc.length - 1)
-                        .split("/")
-                        .pop();
+                    const rootApiPath = apiSrc.substring(
+                        apiSrc.indexOf(srcName) + srcName.length
+                    );
+                    /**
+                     * assign information to route
+                     */
                     routes.forEach(
                         ({
                             method = "GET",
@@ -67,7 +78,7 @@ const scanAndLoad = (apiSrc) => {
                             action,
                         }) => {
                             app[method.toLowerCase()](
-                                `/${folderName + path}`,
+                                `${rootApiPath + path}`,
                                 before,
                                 action
                             );
@@ -79,7 +90,7 @@ const scanAndLoad = (apiSrc) => {
     });
 };
 
-export const start = async () => {
+export default async () => {
     try {
         //
         scanAndLoad(apiSrc);
@@ -90,4 +101,3 @@ export const start = async () => {
         process.exit(1);
     }
 };
-start();

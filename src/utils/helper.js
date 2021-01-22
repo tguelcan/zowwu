@@ -1,20 +1,5 @@
 import { map, pick, partialRight, isArray } from "lodash";
 
-export const exist = async function (data, next) {
-    const doc = await this.model._findOne(this.query);
-    if (!doc) {
-        next(new Error("Document does not exist"));
-    }
-    next();
-};
-
-export const notExist = async (data, res) =>
-    new Promise((resolve, reject) =>
-        data
-            ? resolve(data)
-            : reject(res.status(404).send("Document does not exist"))
-    );
-
 export const jsonSend = (req, res, next) => {
     res.json = (payload, statusCode = 200, filter) => {
         res.statusCode = statusCode;

@@ -1,0 +1,28 @@
+{
+    "name": "zowwu",
+    "version": "0.0.1",
+    "main": "app.js",
+    "author": "tayfun guelcan",
+    "license": "MIT",
+    "scripts": {
+        "build": "babel src -d lib",
+        "dev": "nodemon --exec babel-node -- src/app.js"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.12.10",
+        "@babel/core": "^7.12.10",
+        "@babel/node": "^7.12.10",
+        "@babel/plugin-proposal-export-default-from": "^7.12.1",
+        "@babel/preset-env": "^7.12.11",
+        "babel-plugin-root-import": "^6.6.0",
+        "eslint": "^7.17.0",
+        "eslint-config-airbnb-base": "^14.2.1",
+        "eslint-plugin-import": "^2.22.1",
+        "nodemon": "^2.0.6"
+    },
+    "dependencies": {
+        "lodash": "^4.17.20",
+        "monastery-js": "^1.10.7",
+        "polka": "^0.5.2"
+    }
+}

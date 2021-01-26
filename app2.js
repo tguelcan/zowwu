@@ -9,34 +9,36 @@ const app = polka();
 
 app.use(statusSend).use(jsonSend);
 
-const load = (entryPoint = "api", fullPath) =>
+const load = (srcName = "api") =>
     new Promise((resolve, reject) => {
-        if (!fullPath) {
-            fullPath = entryPoint;
-        }
         /**
          * prevent folder path error
          */
-        if (!fullPath.endsWith("/")) {
-            fullPath = fullPath + "/";
+        if (!srcName.endsWith("/")) {
+            srcName = srcName + "/";
         }
+        /**
+         * check if the path is already absolute
+         */
+        let apiSrc = srcName;
 
-        if (!path.isAbsolute(fullPath)) {
-            fullPath = `${__dirname}/${fullPath}`;
+        if (!path.isAbsolute(apiSrc)) {
+            apiSrc = `${__dirname}/${srcName}`;
         }
-
         /**
          * read files and folders
          */
-
-        fs.readdir(fullPath, (err, files) => {
+        fs.readdir(apiSrc, (err, files) => {
             /**
              * ignore hidden files
              */
             files = files.filter((item) => !/(^|\/)\.[^\/\.]/g.test(item));
             files.forEach((file) => {
-                if (fs.statSync(`${fullPath}${file}`).isDirectory()) {
-                    load(entryPoint, `${fullPath}${file}`);
+                const fullPath = apiSrc + file;
+
+                // Go deeper if subdirectories exist
+                if (fs.statSync(fullPath).isDirectory()) {
+                    load(`${fullPath}/`);
                     return;
                 } else {
                     /**
@@ -44,52 +46,37 @@ const load = (entryPoint = "api", fullPath) =>
                      */
                     if (!files.includes("index.js"))
                         throw new Error("No index.js file found");
-
+                    /**
+                     * load index
+                     */
                     if (file === "index.js") {
                         const {
                             routes,
                             before = (req, res, next) => next(),
-                        } = require(`${fullPath}${file}`).default;
-
-                        /**
-                         * get folder tree informations
-                         */
-                        const treePath = fullPath
-                            .slice(0, -1)
-                            .substring(
-                                fullPath
-                                    .slice(0, -1)
-                                    .lastIndexOf(`${entryPoint}/`) +
-                                    entryPoint.length
-                            );
-
+                        } = require(fullPath).default;
                         /**
                          * route global before function
                          */
                         if (before.constructor === Array) {
                             before.forEach((b) => {
-                                app.use(async (req, res, next) => {
-                                    if (req.url.startsWith(treePath)) {
-                                        await b(req, res, next);
-                                    }
-                                    next();
-                                });
+                                app.use(b);
                             });
                         } else {
-                            app.use(async (req, res, next) => {
-                                if (req.url.startsWith(treePath)) {
-                                    await before(req, res, next);
-                                }
-                                next();
-                            });
+                            app.use(before);
                         }
-
                         /**
                          * throw error if no routes defined
                          */
                         if (!routes?.length) {
                             throw new Error("No routes found");
                         }
+
+                        /**
+                         * get folder tree informations
+                         */
+                        const rootApiPath = apiSrc.substring(
+                            apiSrc.indexOf(srcName) + srcName.length
+                        );
 
                         /**
                          * assign information to route
@@ -102,7 +89,7 @@ const load = (entryPoint = "api", fullPath) =>
                                 action,
                             }) => {
                                 app[method.toLowerCase()](
-                                    treePath + path,
+                                    `${rootApiPath + path}`,
                                     before,
                                     action
                                 );

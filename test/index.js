@@ -1,8 +1,8 @@
-import load from "./../src/app";
+import loader from "./../src/app";
 
-load().then((app) =>
+loader().then((app) => {
     app.listen(3000, (err) => {
         if (err) throw err;
         console.log(`> Running on localhost:3000`);
-    })
-);
+    });
+});

@@ -1,64 +1,72 @@
-import fs from "fs";
-import path from "path";
+import { readdir, statSync } from "fs";
+import { isAbsolute, dirname, resolve } from "path";
 
 import polka from "polka";
 import { jsonSend, statusSend } from "~/utils";
 
-// initial polka
+// initial values
 const app = polka();
-
+const env = process.env.NODE_ENV;
+// add custom middleware
 app.use(statusSend).use(jsonSend);
 
+/**
+ * Initial load module
+ * @param  {String} entryPoint default api, root folder of routes
+ * @param  {String} fullPath   just only for the generator
+ * @return {Promise}           polka app
+ */
 const load = (entryPoint = "api", fullPath) =>
-    new Promise((resolve, reject) => {
+    new Promise((res) => {
         if (!fullPath) {
             fullPath = entryPoint;
         }
-        /**
-         * prevent folder path error
-         */
+        // prevent folder path error
         if (!fullPath.endsWith("/")) {
             fullPath = fullPath + "/";
         }
 
-        if (!path.isAbsolute(fullPath)) {
-            fullPath = `${path.dirname(require.main.filename)}/${fullPath}`;
+        if (!isAbsolute(fullPath)) {
+            fullPath =
+                env === "test"
+                    ? resolve() + `/test/${entryPoint}/`
+                    : `${dirname(require.main.filename)}/${fullPath}`;
         }
 
         /**
          * read files and folders
+         * @param  {String} fullPath full path of root project directory
          */
-        fs.readdir(fullPath, (err, files) => {
-            /**
-             * ignore hidden files
-             */
+        readdir(fullPath, (err, files) => {
+            // ignore hidden files
             if (!files) {
                 console.log(`No files found in ${fullPath}`);
                 return;
             }
             files = files.filter((item) => !/(^|\/)\.[^\/\.]/g.test(item));
             files.forEach((file) => {
-                if (fs.statSync(`${fullPath}${file}`).isDirectory()) {
+                if (statSync(`${fullPath}${file}`).isDirectory()) {
                     load(entryPoint, `${fullPath}${file}`);
                     return;
                 } else {
-                    const ifRouteExist = (route) => {
+                    /**
+                     * Additional route validation
+                     * @param  {String} route
+                     * @return {Boolean}
+                     */
+                    const validateRoute = (route) => {
                         const routeFile = require(route).default;
                         return !!routeFile?.routes;
                     };
-                    if (ifRouteExist(`${fullPath}${file}`)) {
+                    if (validateRoute(`${fullPath}${file}`)) {
                         const {
                             routes,
                             before = (req, res, next) => next(),
                         } = require(`${fullPath}${file}`).default;
 
-                        /**
-                         * get folder tree informations
-                         */
+                        // get folder tree informations
                         let treePath;
-                        /**
-                         * if index.js in folder (/messages/index.js)
-                         */
+                        // if index.js in folder (/messages/index.js)
                         if (file === "index.js") {
                             treePath = fullPath
                                 .slice(0, -1)
@@ -69,9 +77,7 @@ const load = (entryPoint = "api", fullPath) =>
                                         entryPoint.length
                                 );
                         } else {
-                            /**
-                             * if another file in folder (/messages/anotherFile.js)
-                             */
+                            // if another file in folder (/messages/anotherFile.js)
                             treePath = fullPath.substring(
                                 fullPath.lastIndexOf(`${entryPoint}/`) +
                                     entryPoint.length
@@ -106,9 +112,7 @@ const load = (entryPoint = "api", fullPath) =>
                          * throw error if no routes defined
                          */
                         if (routes?.length) {
-                            /**
-                             * assign information to route
-                             */
+                            // assign information to route
                             routes.forEach(
                                 ({
                                     method = "GET",
@@ -128,7 +132,7 @@ const load = (entryPoint = "api", fullPath) =>
                 }
             });
         });
-        resolve(app);
+        res(app);
     });
 
 export default load;

@@ -4,7 +4,7 @@ export default {
             method: "GET",
             path: "/",
             action: async (req, res, next) => {
-                res.json({ status: "content route" });
+                res.json({ status: "route:content" });
             },
         },
     ],

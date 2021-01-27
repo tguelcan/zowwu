@@ -4,16 +4,14 @@ export default {
             method: "GET",
             path: "/",
             action: async (req, res, next) => {
-                console.log("action");
-                res.json({ status: "test" });
+                res.json({ status: "route:messages" });
             },
         },
         {
             method: "GET",
             path: "/:id",
             action: async (req, res, next) => {
-                console.log(req.params);
-                res.json({ status: req.params });
+                res.json({ status: req.params.id });
             },
         },
     ],

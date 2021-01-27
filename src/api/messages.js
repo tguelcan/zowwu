@@ -5,7 +5,7 @@ export default {
             path: "/",
             action: async (req, res, next) => {
                 console.log("action");
-                res.json({ status: "success" });
+                res.json({ status: "messages" });
             },
         },
     ],

@@ -39,13 +39,11 @@ const load = (entryPoint = "api", fullPath) =>
                     load(entryPoint, `${fullPath}${file}`);
                     return;
                 } else {
-                    /**
-                     * throw error if no index.js file found
-                     */
-                    if (!files.includes("index.js"))
-                        throw new Error("No index.js file found");
-
-                    if (file === "index.js") {
+                    const ifRouteExist = (route) => {
+                        const routeFile = require(route).default;
+                        return !!routeFile?.routes;
+                    };
+                    if (ifRouteExist(`${fullPath}${file}`)) {
                         const {
                             routes,
                             before = (req, res, next) => next(),
@@ -54,14 +52,26 @@ const load = (entryPoint = "api", fullPath) =>
                         /**
                          * get folder tree informations
                          */
-                        const treePath = fullPath
-                            .slice(0, -1)
-                            .substring(
-                                fullPath
-                                    .slice(0, -1)
-                                    .lastIndexOf(`${entryPoint}/`) +
+                        let treePath;
+                        /**
+                         * if index.js in folder
+                         */
+                        if (file === "index.js") {
+                            treePath = fullPath
+                                .slice(0, -1)
+                                .substring(
+                                    fullPath
+                                        .slice(0, -1)
+                                        .lastIndexOf(`${entryPoint}/`) +
+                                        entryPoint.length
+                                );
+                        } else {
+                            treePath = fullPath.substring(
+                                fullPath.lastIndexOf(`${entryPoint}/`) +
                                     entryPoint.length
                             );
+                            treePath = treePath + file.slice(0, -3);
+                        }
 
                         /**
                          * route global before function
@@ -88,7 +98,8 @@ const load = (entryPoint = "api", fullPath) =>
                          * throw error if no routes defined
                          */
                         if (!routes?.length) {
-                            throw new Error("No routes found");
+                            return;
+                            // throw new Error("No routes found");
                         }
 
                         /**

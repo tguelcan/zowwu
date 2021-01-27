@@ -22,17 +22,20 @@ const load = (entryPoint = "api", fullPath) =>
         }
 
         if (!path.isAbsolute(fullPath)) {
-            fullPath = `${__dirname}/${fullPath}`;
+            fullPath = `${path.dirname(require.main.filename)}/${fullPath}`;
         }
 
         /**
          * read files and folders
          */
-
         fs.readdir(fullPath, (err, files) => {
             /**
              * ignore hidden files
              */
+            if (!files) {
+                console.log(`No files found in ${fullPath}`);
+                return;
+            }
             files = files.filter((item) => !/(^|\/)\.[^\/\.]/g.test(item));
             files.forEach((file) => {
                 if (fs.statSync(`${fullPath}${file}`).isDirectory()) {
@@ -54,7 +57,7 @@ const load = (entryPoint = "api", fullPath) =>
                          */
                         let treePath;
                         /**
-                         * if index.js in folder
+                         * if index.js in folder (/messages/index.js)
                          */
                         if (file === "index.js") {
                             treePath = fullPath
@@ -66,6 +69,9 @@ const load = (entryPoint = "api", fullPath) =>
                                         entryPoint.length
                                 );
                         } else {
+                            /**
+                             * if another file in folder (/messages/anotherFile.js)
+                             */
                             treePath = fullPath.substring(
                                 fullPath.lastIndexOf(`${entryPoint}/`) +
                                     entryPoint.length
@@ -74,6 +80,7 @@ const load = (entryPoint = "api", fullPath) =>
                         }
 
                         /**
+                         * key: before
                          * route global before function
                          */
                         if (before.constructor === Array) {
@@ -95,30 +102,28 @@ const load = (entryPoint = "api", fullPath) =>
                         }
 
                         /**
+                         * key: routes
                          * throw error if no routes defined
                          */
-                        if (!routes?.length) {
-                            return;
-                            // throw new Error("No routes found");
+                        if (routes?.length) {
+                            /**
+                             * assign information to route
+                             */
+                            routes.forEach(
+                                ({
+                                    method = "GET",
+                                    path,
+                                    before = (req, res, next) => next(),
+                                    action,
+                                }) => {
+                                    app[method.toLowerCase()](
+                                        treePath + path,
+                                        before,
+                                        action
+                                    );
+                                }
+                            );
                         }
-
-                        /**
-                         * assign information to route
-                         */
-                        routes.forEach(
-                            ({
-                                method = "GET",
-                                path,
-                                before = (req, res, next) => next(),
-                                action,
-                            }) => {
-                                app[method.toLowerCase()](
-                                    treePath + path,
-                                    before,
-                                    action
-                                );
-                            }
-                        );
                     }
                 }
             });

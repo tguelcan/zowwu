@@ -6,7 +6,7 @@
     "license": "MIT",
     "scripts": {
         "build": "babel src -d lib",
-        "dev": "nodemon --exec babel-node -- src/index.js",
+        "dev": "nodemon --exec babel-node -- test/index.js",
         "start": "node lib/index.js"
     },
     "devDependencies": {
@@ -24,8 +24,6 @@
         "nodemon": "^2.0.6"
     },
     "dependencies": {
-        "lodash": "^4.17.20",
-        "monastery-js": "^1.10.7",
         "polka": "^0.5.2"
     }
 }

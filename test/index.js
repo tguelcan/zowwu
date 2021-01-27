@@ -1,4 +1,4 @@
-import load from "./app";
+import load from "./../src/app";
 
 load().then((app) =>
     app.listen(3000, (err) => {

@@ -52,7 +52,7 @@ The project is still in progress. Support is **greatly appreciated**.
 
 ### Installation
 
-1. Clone the repo
+1. Install Package
    ```sh
    npm install zowwu
    ```

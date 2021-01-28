@@ -1,4 +1,4 @@
-import loader from "./../src/app";
+const loader = require("./../lib/app");
 
 loader().then((app) => {
     app.listen(3000, (err) => {

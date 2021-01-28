@@ -1,12 +1,12 @@
 {
     "name": "zowwu",
-    "version": "0.0.1",
+    "version": "0.0.6",
     "main": "lib/app.js",
     "author": "tayfun guelcan",
     "license": "MIT",
     "scripts": {
         "build": "babel src -d lib",
-        "dev": "nodemon --exec babel-node -- test/index.js",
+        "dev": "npm run build && nodemon --exec babel-node -- test/index.js",
         "start": "node test/index.js",
         "test": "ava test/**/*.test.js --verbose",
         "test:watch": "ava --verbose --watch"
@@ -16,10 +16,10 @@
         "@babel/cli": "^7.12.10",
         "@babel/core": "^7.12.10",
         "@babel/node": "^7.12.10",
-        "@babel/plugin-transform-runtime": "^7.12.10",
         "@babel/preset-env": "^7.12.11",
         "ava": "^3.15.0",
         "babel-plugin-root-import": "^6.6.0",
+        "babel-polyfill": "^6.26.0",
         "eslint": "^7.17.0",
         "eslint-config-airbnb-base": "^14.2.1",
         "eslint-plugin-import": "^2.22.1",
@@ -31,7 +31,8 @@
     },
     "ava": {
         "require": [
-            "@babel/register"
+            "@babel/register",
+            "babel-polyfill"
         ]
     }
 }

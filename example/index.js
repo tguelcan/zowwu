@@ -1,4 +1,4 @@
-const loader = require("./../lib/app");
+const loader = require("zowwu");
 
 loader().then((app) => {
     app.listen(3000, (err) => {

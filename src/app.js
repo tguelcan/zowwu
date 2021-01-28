@@ -10,16 +10,23 @@ const env = process.env.NODE_ENV;
 // add custom middleware
 app.use(jsonSend);
 
+const defaultOptions = {
+    entry: "api",
+    debug: true,
+};
+
 /**
  * Initial load module
- * @param  {String} entryPoint default api, root folder of routes
+ * @param  {String} entry default api, root folder of routes
  * @param  {String} fullPath   just only for the generator
  * @return {Promise}           polka app
  */
-const load = (entryPoint = "api", fullPath) =>
+const load = (options, fullPath) =>
     new Promise((res) => {
+        const { entry, debug } = Object.assign(defaultOptions, options);
+
         if (!fullPath) {
-            fullPath = entryPoint;
+            fullPath = entry;
         }
         // prevent folder path error
         if (!fullPath.endsWith("/")) {
@@ -29,7 +36,7 @@ const load = (entryPoint = "api", fullPath) =>
         if (!isAbsolute(fullPath)) {
             fullPath =
                 env === "test"
-                    ? resolve() + `/test/${entryPoint}/`
+                    ? resolve() + `/test/${entry}/`
                     : `${dirname(require.main.filename)}/${fullPath}`;
         }
 
@@ -38,6 +45,7 @@ const load = (entryPoint = "api", fullPath) =>
          * @param  {String} fullPath full path of root project directory
          */
         readdir(fullPath, (err, files) => {
+            debug && console.log(`Look into ${fullPath}`);
             // ignore hidden files
             if (!files) {
                 console.log(`No files found in ${fullPath}`);
@@ -46,7 +54,7 @@ const load = (entryPoint = "api", fullPath) =>
             files = files.filter((item) => !/(^|\/)\.[^\/\.]/g.test(item));
             files.forEach((file) => {
                 if (statSync(`${fullPath}${file}`).isDirectory()) {
-                    load(entryPoint, `${fullPath}${file}`);
+                    load(entry, `${fullPath}${file}`);
                     return;
                 } else {
                     /**
@@ -55,14 +63,14 @@ const load = (entryPoint = "api", fullPath) =>
                      * @return {Boolean}
                      */
                     const validateRoute = (route) => {
-                        const routeFile = require(route).default;
+                        const routeFile = require(route);
                         return !!routeFile?.routes;
                     };
                     if (validateRoute(`${fullPath}${file}`)) {
                         const {
                             routes,
                             before = (req, res, next) => next(),
-                        } = require(`${fullPath}${file}`).default;
+                        } = require(`${fullPath}${file}`);
 
                         // get folder tree informations
                         let treePath;
@@ -73,14 +81,12 @@ const load = (entryPoint = "api", fullPath) =>
                                 .substring(
                                     fullPath
                                         .slice(0, -1)
-                                        .lastIndexOf(`${entryPoint}/`) +
-                                        entryPoint.length
+                                        .lastIndexOf(`${entry}/`) + entry.length
                                 );
                         } else {
                             // if another file in folder (/messages/anotherFile.js)
                             treePath = fullPath.substring(
-                                fullPath.lastIndexOf(`${entryPoint}/`) +
-                                    entryPoint.length
+                                fullPath.lastIndexOf(`${entry}/`) + entry.length
                             );
                             treePath = treePath + file.slice(0, -3);
                         }
@@ -120,6 +126,13 @@ const load = (entryPoint = "api", fullPath) =>
                                     before = (req, res, next) => next(),
                                     action,
                                 }) => {
+                                    debug &&
+                                        console.log(
+                                            `${method.toUpperCase()} ${
+                                                treePath + path
+                                            }`
+                                        );
+
                                     app[method.toLowerCase()](
                                         treePath + path,
                                         before,
@@ -135,4 +148,4 @@ const load = (entryPoint = "api", fullPath) =>
         res(app);
     });
 
-export default load;
+module.exports = load;

@@ -1,6 +1,6 @@
 import test from "ava";
 import request from "supertest";
-import loader from "./../src/app";
+import loader from "./../lib/app";
 
 test.before(async (t) => {
     const { handler } = await loader();

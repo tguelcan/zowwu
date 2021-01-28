@@ -1,7 +1,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-    <img src="http://media.kopfundgeist.de/zowwu.png" alt="Logo" width="700" height="286">
+    <img src="http://media.kopfundgeist.de/zowwu.png" alt="Logo" width="700">
 
   <h3 align="center">it's never been easier to create a REST api</h3>
   <p align="center">folder based routing service</p>
@@ -49,11 +49,6 @@ The project is still in progress. Support is **greatly appreciated**.
 <img src="http://media.kopfundgeist.de/zowwu_folder.png" alt="Logo" width="700">
 
 <!-- GETTING STARTED -->
-
-## Getting Started
-
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
 
 ### Installation
 

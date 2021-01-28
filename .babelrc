@@ -1,7 +1,6 @@
 {
     "presets": ["@babel/preset-env"],
     "plugins": [
-        "@babel/plugin-proposal-export-default-from",
         "@babel/plugin-transform-runtime",
         [
             "babel-plugin-root-import",
@@ -10,10 +9,6 @@
                     {
                         "rootPathPrefix": "~/",
                         "rootPathSuffix": "src"
-                    },
-                    {
-                        "rootPathPrefix": "?/",
-                        "rootPathSuffix": "test"
                     }
                 ]
             }

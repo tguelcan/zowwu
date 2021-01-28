@@ -1,9 +1,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
     <img src="http://media.kopfundgeist.de/zowwu.png" alt="Logo" width="700" height="286">
-  </a>
 
   <h3 align="center">it's never been easier to create a REST api</h3>
   <p align="center">folder based routing service</p>
@@ -47,6 +45,8 @@ Just don't waste any time. If you're building a project, you probably have a cle
 We use [polka](https://github.com/lukeed/polka) for it. an extremely minimal, highly performant Express.js alternative that uses the native HTTP driver.
 
 The project is still in progress. Support is **greatly appreciated**.
+
+<img src="http://media.kopfundgeist.de/zowwu_folder.png" alt="Logo" width="700">
 
 <!-- GETTING STARTED -->
 

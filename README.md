@@ -4,7 +4,7 @@
     <img src="http://media.kopfundgeist.de/zowwu.png" alt="Logo" width="700">
 
   <h3 align="center">it's never been easier to create a REST api</h3>
-  <p align="center">folder based routing service</p>
+  <p align="center">folder and filename based routing service</p>
   <p align="center">
     <a href="https://github.com/tguelcan/zowwu/issues">Report Bug</a>
     ·

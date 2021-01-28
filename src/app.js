@@ -2,13 +2,13 @@ import { readdir, statSync } from "fs";
 import { isAbsolute, dirname, resolve } from "path";
 
 import polka from "polka";
-import { jsonSend, statusSend } from "~/utils";
+import { jsonSend } from "~/utils";
 
 // initial values
 const app = polka();
 const env = process.env.NODE_ENV;
 // add custom middleware
-app.use(statusSend).use(jsonSend);
+app.use(jsonSend);
 
 /**
  * Initial load module

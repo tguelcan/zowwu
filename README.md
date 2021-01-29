@@ -46,7 +46,7 @@ We use [polka](https://github.com/lukeed/polka) for it. an extremely minimal, hi
 The project is still in progress. Support is **greatly appreciated**.
 
 <p align="center">
-  <img src="http://media.kopfundgeist.de/zowwu_folder.png" alt="Logo" width="700">
+  <img src="http://media.kopfundgeist.de/zowwu_folder_.png" alt="Logo" width="700">
 </p>
 <!-- GETTING STARTED -->
 

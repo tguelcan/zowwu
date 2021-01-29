@@ -115,14 +115,13 @@ const load = (options, fullPath) =>
 
                         /**
                          * key: routes
-                         * throw error if no routes defined
                          */
                         if (routes?.length) {
                             // assign information to route
                             routes.forEach(
                                 ({
                                     method = "GET",
-                                    path,
+                                    path = "/",
                                     before = (req, res, next) => next(),
                                     action,
                                 }) => {

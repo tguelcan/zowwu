@@ -1,5 +1,4 @@
 <!-- PROJECT LOGO -->
-<br />
 <p align="center">
     <img src="http://media.kopfundgeist.de/zowwu.png" alt="Logo" width="700" height="286">
 
@@ -46,8 +45,9 @@ We use [polka](https://github.com/lukeed/polka) for it. an extremely minimal, hi
 
 The project is still in progress. Support is **greatly appreciated**.
 
-<img src="http://media.kopfundgeist.de/zowwu_folder.png" alt="Logo" width="700">
-
+<p align="center">
+  <img src="http://media.kopfundgeist.de/zowwu_folder.png" alt="Logo" width="700">
+</p>
 <!-- GETTING STARTED -->
 
 ## Getting Started
@@ -94,8 +94,17 @@ loader().then((app) => {
 #### Create your folders or files
 
 ```
-   ./api/comments/index.js
-   ./api/articles/index.js
+   ./api/comments/index.js  -> http://localhost:3000/comments
+   ./api/comments/deeper/index.js  -> http://localhost:3000/comments/deeper
+   ./api/articles/index.js  -> http://localhost:3000/comments
+   ./api/...
+```
+
+or
+
+```
+   ./api/comments.js  -> http://localhost:3000/comments
+   ./api/articles.js  -> http://localhost:3000/articles
    ./api/...
 ```
 
@@ -103,7 +112,6 @@ loader().then((app) => {
 module.exports = {
   routes: [
     {
-      path: "/",
       action: async (req, res, next) => {
         res.json({ status: "Hello world" });
       },
@@ -112,20 +120,31 @@ module.exports = {
 };
 ```
 
+#### Route Options
+
+```javascript
+module.exports = {
+  routes: [
+    {
+      path: '/', // Optional, default '/'
+      method: 'GET', // Optional, default 'GET'
+      before: async (req, res, next) => ..., // Before Handler (Hook)
+      action: async (req, res, next) => ...  // Handler
+    },
+  ],
+};
+```
+
+#### More Informations:
+
+[polka](https://github.com/lukeed/polka) based on [trouter](https://github.com/lukeed/trouter).
+
 #### Now you can query
 
 ```sh
  curl http://localhost:3000/articles
  curl http://localhost:3000/comments
  ...
-```
-
-#### File based endpoints also possible
-
-```
-   ./api/comments.js
-   ./api/articles.js
-   ./api/...
 ```
 
 #### Middlewares (Endpoint specific)
@@ -145,10 +164,16 @@ module.exports = {
   before: [one, two],
   routes: [
     {
-      path: "/",
       action: async (req, res, next) => {
         // Get Posts
         res.json([{ title: "Post..." }]);
+      },
+    },
+    {
+      path: "/:id",
+      action: async (req, res, next) => {
+        // Get Posts
+        res.json([{ title: `Hello ${req.params}` }]);
       },
     },
     {
@@ -179,7 +204,6 @@ function two(req, res, next) {
 module.exports = {
   routes: [
     {
-      path: "/",
       before: one,
       action: async (req, res, next) => {
         // Get Posts

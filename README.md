@@ -92,7 +92,7 @@ const loader = require("zowwu");
 
 loader({
   entry: 'api', // default api folder
-  debug: false, // default true - it shows you the generated routes on load
+  debug: true, // default false - it shows you the generated routes on load
   pluginPath: 'plugins' // default plugins
 }).then(app => // return the polkajs instance
 

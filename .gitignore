@@ -77,7 +77,7 @@ docs/
 .VSCodeCounter
 
 # package management specific
-package-lock.json
+# package-lock.json
 
 # Licence
 licence.csv

@@ -13,7 +13,7 @@ test.serial("GET /messages 200", async (t) => {
     const { status, body } = await request(t.context.handler).get("/messages");
     t.is(status, 200);
     t.deepEqual(body, {
-        status: "route:messages",
+        status: "myplugin:action",
     });
 });
 

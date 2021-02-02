@@ -26,6 +26,7 @@
       <ul>
         <li><a href="#installation">Installation</a></li>
         <li><a href="#usage">Usage</a></li>
+        <li><a href="#plugins">Plugins</a></li>
       </ul>
     </li>
     <li><a href="#roadmap">Roadmap</a></li>
@@ -40,8 +41,7 @@
 
 ## About The Project
 
-Just don't waste any time. If you're building a project, you probably have a clean folder structure anyway. Zowwu uses the folder structure and automatically creates your API endpoints from it.
-We use [polka](https://github.com/lukeed/polka) for it. an extremely minimal, highly performant Express.js alternative that uses the native HTTP driver.
+Just don't waste any time. If you're building a project, you probably have a clean folder structure anyway. Zowwu uses the folder structure and automatically creates your API endpoints based on [polka](https://github.com/lukeed/polka) from it.
 
 The project is still in progress. Support is **greatly appreciated**.
 
@@ -65,8 +65,6 @@ The project is still in progress. Support is **greatly appreciated**.
 
 ## Usage
 
-### Simple usage
-
 #### Server
 
 ```
@@ -76,14 +74,27 @@ The project is still in progress. Support is **greatly appreciated**.
 ```javascript
 const loader = require("zowwu");
 
-// Options: loader({ entry: 'src', debug: false }).then(...
-
 loader().then((app) => {
   app.listen(3000, (err) => {
     if (err) throw err;
     console.log(`> Running on localhost:3000`);
   });
 });
+```
+
+Available options:
+
+```javascript
+const loader = require("zowwu");
+
+// Options: loader({ entry: 'src', debug: false, pluginPath: 'plugins' }).then(...
+
+loader({
+  entry: 'api', // default api folder
+  debug: false, // default true - it shows you the generated routes on load
+  pluginPath: 'plugins' // default plugins
+}).then(app => // return the polkajs instance
+
 ```
 
 #### Create your folders or files
@@ -130,9 +141,7 @@ module.exports = {
 };
 ```
 
-#### More Informations:
-
-[polka](https://github.com/lukeed/polka) based on [trouter](https://github.com/lukeed/trouter).
+> For more information - [polka](https://github.com/lukeed/polka) based on [trouter](https://github.com/lukeed/trouter).
 
 #### Now you can query
 
@@ -212,6 +221,80 @@ module.exports = {
       action: async (req, res, next) => {
         // Create Post
         res.end("Create Post...");
+      },
+    },
+  ],
+};
+```
+
+<!-- PLUGINS -->
+
+## Plugins
+
+Plugins work like normal routes.
+For example, you can provide the authentication function as a plugin or other functions.
+
+#### Create your folders or files
+
+```
+   ./plugins/myplugin.js
+   or
+   ./plugins/myplugin/index.js
+   ./api/...
+```
+
+> Note: With the plug-ins, you cannot go deeper into the folder structure.
+
+```javascript
+// ./plugins/myplugin.js  or  ./plugins/myplugin/index.js
+module.exports = {
+  routes: [
+    {
+      action: async (req, res, next) => {
+        res.json({ status: "Hello plugin" });
+      },
+    },
+  ],
+};
+```
+
+```javascript
+// ./api/myroute.js
+module.exports = {
+  routes: [
+    {
+      plugin: "myplugin",
+    },
+    {
+      path: "/:id",
+      action: async (req, res, next) => {
+        res.json({ status: req.params.id });
+      },
+    },
+  ],
+};
+```
+
+You can still add your middlewares here or overwrite the plugins:
+
+```javascript
+// ./api/myroute.js
+module.exports = {
+  routes: [
+    {
+      plugin: "myplugin",
+      before: async (req, res, next) => {
+        console.log("before.. but after plugin function");
+        next();
+      },
+      action: async (req, res, next) => {
+        res.json({ status: "overwrite plugin" });
+      },
+    },
+    {
+      path: "/:id",
+      action: async (req, res, next) => {
+        res.json({ status: req.params.id });
       },
     },
   ],

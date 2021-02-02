@@ -1,9 +1,7 @@
 module.exports = {
     routes: [
         {
-            action: async (req, res, next) => {
-                res.json({ status: "route:messages" });
-            },
+            plugin: "myplugin",
         },
         {
             path: "/:id",

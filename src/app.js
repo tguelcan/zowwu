@@ -12,8 +12,11 @@ app.use(jsonSend);
 
 const defaultOptions = {
     entry: "api",
-    debug: true,
+    pluginPath: "plugins",
+    debug: false,
 };
+
+const defaultAction = (req, res, next) => next();
 
 /**
  * Initial load module
@@ -23,21 +26,36 @@ const defaultOptions = {
  */
 const load = (options, fullPath) =>
     new Promise((res) => {
-        const { entry, debug } = Object.assign(defaultOptions, options);
+        let { entry, debug, pluginPath } = Object.assign(
+            defaultOptions,
+            options
+        );
 
         if (!fullPath) {
             fullPath = entry;
         }
+
         // prevent folder path error
         if (!fullPath.endsWith("/")) {
             fullPath = fullPath + "/";
         }
 
+        if (!pluginPath.endsWith("/")) {
+            pluginPath = pluginPath + "/";
+        }
+
         if (!isAbsolute(fullPath)) {
             fullPath =
                 env === "test"
-                    ? resolve() + `/test/${entry}/`
+                    ? resolve() + `/test/${fullPath}`
                     : `${dirname(require.main.filename)}/${fullPath}`;
+        }
+
+        if (!isAbsolute(pluginPath)) {
+            pluginPath =
+                env === "test"
+                    ? resolve() + `/test/${pluginPath}`
+                    : `${dirname(require.main.filename)}/${pluginPath}`;
         }
 
         /**
@@ -120,9 +138,10 @@ const load = (options, fullPath) =>
                             // assign information to route
                             routes.forEach(
                                 ({
+                                    plugin = null,
                                     method = "GET",
                                     path = "/",
-                                    before = (req, res, next) => next(),
+                                    before,
                                     action,
                                 }) => {
                                     debug &&
@@ -132,11 +151,37 @@ const load = (options, fullPath) =>
                                             }`
                                         );
 
-                                    app[method.toLowerCase()](
-                                        treePath + path,
-                                        before,
-                                        action
-                                    );
+                                    // Load with plugin
+                                    if (plugin) {
+                                        let pluginValues;
+
+                                        if (
+                                            statSync(
+                                                `${pluginPath}${plugin}`
+                                            ).isDirectory()
+                                        ) {
+                                            pluginValues = require(`${pluginPath}${plugin}/index.js`);
+                                        } else {
+                                            pluginValues = require(`${pluginPath}${plugin}.js`);
+                                        }
+
+                                        app[pluginValues.method.toLowerCase()](
+                                            treePath + pluginValues.path ||
+                                                path,
+                                            before ||
+                                                pluginValues?.before ||
+                                                defaultAction,
+                                            action ||
+                                                pluginValues?.action ||
+                                                defaultAction
+                                        );
+                                    } else {
+                                        app[method.toLowerCase()](
+                                            treePath + path,
+                                            before || defaultAction,
+                                            action || defaultAction
+                                        );
+                                    }
                                 }
                             );
                         }

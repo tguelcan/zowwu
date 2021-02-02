@@ -1,8 +1,20 @@
 {
     "name": "zowwu",
-    "version": "0.0.6",
+    "description": "The easiest way to create a RESTful endpoints.",
+    "version": "0.0.9",
     "main": "lib/app.js",
-    "author": "tayfun guelcan",
+    "author": "Tayfun Guelcan",
+    "repository": "https://github.com/tguelcan/zowwu",
+    "keywords": [
+        "restful",
+        "npm",
+        "rest",
+        "simple",
+        "api",
+        "polka",
+        "expressjs",
+        "express"
+    ],
     "license": "MIT",
     "scripts": {
         "build": "babel src -d lib",

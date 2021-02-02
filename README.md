@@ -14,6 +14,9 @@
 </p>
     <br />
 
+![Node.js CI](https://github.com/tguelcan/zowwu/workflows/Node.js%20CI/badge.svg)
+![LICENCE](https://img.shields.io/github/license/tguelcan/zowwu)
+
 <!-- TABLE OF CONTENTS -->
 <details open="open">
   <summary>Table of Contents</summary>
@@ -82,12 +85,10 @@ loader().then((app) => {
 });
 ```
 
-Available options:
+👩‍🔧 Available options:
 
 ```javascript
 const loader = require("zowwu");
-
-// Options: loader({ entry: 'src', debug: false, pluginPath: 'plugins' }).then(...
 
 loader({
   entry: 'api', // default api folder
@@ -126,6 +127,8 @@ module.exports = {
 };
 ```
 
+> 🪄 Now your routes are automatically created based on the file names and/or folder structure
+
 #### Route Options
 
 ```javascript
@@ -141,7 +144,7 @@ module.exports = {
 };
 ```
 
-> For more information - [polka](https://github.com/lukeed/polka) based on [trouter](https://github.com/lukeed/trouter).
+> 📄 For more information - [polka](https://github.com/lukeed/polka) based on [trouter](https://github.com/lukeed/trouter).
 
 #### Now you can query
 
@@ -240,7 +243,7 @@ For example, you can provide the authentication function as a plugin or other fu
    ./plugins/myplugin.js
    or
    ./plugins/myplugin/index.js
-   ./api/...
+   ./plugins/...
 ```
 
 > Note: With the plug-ins, you cannot go deeper into the folder structure.
@@ -275,7 +278,7 @@ module.exports = {
 };
 ```
 
-You can still add your middlewares here or overwrite the plugins:
+🤟 You can still add your middlewares here or overwrite the plugins:
 
 ```javascript
 // ./api/myroute.js
@@ -329,7 +332,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Tayfun Gülcan - [@tayfuuu](https://twitter.com/Tayfuuu)
+Tayfun Gülcan - [Twitter](https://twitter.com/Tayfuuu) [LinkedIn](https://www.linkedin.com/in/%E2%98%95-tayfun-g%C3%BClcan-57627aab/)
 
 <!-- ACKNOWLEDGEMENTS -->
 

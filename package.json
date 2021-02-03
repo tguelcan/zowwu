@@ -2,7 +2,7 @@
     "name": "zowwu",
     "description": "The easiest way to create a RESTful endpoints.",
     "version": "0.0.9",
-    "main": "lib/app.js",
+    "main": "test/app.js",
     "author": "Tayfun Guelcan",
     "repository": "https://github.com/tguelcan/zowwu",
     "keywords": [

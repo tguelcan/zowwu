@@ -9,7 +9,7 @@
     ·
     <a href="https://github.com/tguelcan/zowwu/labels/Feature%20request">Request Feature</a>
     ·
-    <a href="paypal.me/tayfuuu">Donate</a>
+    <a href="https://www.buymeacoffee.com/tayfuuu">Donate</a>
   </p>
 </p>
     <br />

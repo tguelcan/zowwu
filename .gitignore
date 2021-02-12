@@ -67,7 +67,6 @@ typings/
 
 # Output of 'npm run build'
 dist/
-lib/
 
 # Output of 'npm run docs'
 docs/

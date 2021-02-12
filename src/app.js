@@ -32,12 +32,12 @@ const load = (options, fullPath) =>
             defaultOptions,
             options
         );
-
         // Register custom middlewares
         register?.length &&
             register.forEach((r) => {
                 if (modulesRegistred) return;
                 app.use(r);
+                debug && console.log("Module registred");
                 modulesRegistred = true;
             });
 

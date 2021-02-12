@@ -16,6 +16,8 @@ const defaultOptions = {
     debug: false,
 };
 
+let modulesRegistred = false;
+
 const defaultAction = (req, res, next) => next();
 
 /**
@@ -26,10 +28,18 @@ const defaultAction = (req, res, next) => next();
  */
 const load = (options, fullPath) =>
     new Promise((res) => {
-        let { entry, debug, pluginPath } = Object.assign(
+        let { entry, debug, pluginPath, register } = Object.assign(
             defaultOptions,
             options
         );
+
+        // Register custom middlewares
+        register?.length &&
+            register.forEach((r) => {
+                if (modulesRegistred) return;
+                app.use(r);
+                modulesRegistred = true;
+            });
 
         if (!fullPath) {
             fullPath = entry;

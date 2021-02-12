@@ -30,6 +30,7 @@
         <li><a href="#installation">Installation</a></li>
         <li><a href="#usage">Usage</a></li>
         <li><a href="#plugins">Plugins</a></li>
+        <li><a href="#modules">Modules</a></li>
       </ul>
     </li>
     <li><a href="#roadmap">Roadmap</a></li>
@@ -85,19 +86,6 @@ loader().then((app) => {
 });
 ```
 
-👩‍🔧 Available options:
-
-```javascript
-const loader = require("zowwu");
-
-loader({
-  entry: 'api', // default api folder
-  debug: true, // default false - it shows you the generated routes on load
-  pluginPath: 'plugins' // default plugins
-}).then(app => // return the polkajs instance
-
-```
-
 #### Create your folders or files
 
 ```
@@ -135,14 +123,30 @@ module.exports = {
 module.exports = {
   routes: [
     {
-      path: '/', // Optional, default '/'
-      method: 'GET', // Optional, default 'GET'
-      before: async (req, res, next) => ..., // Before Handler (Hook)
-      action: async (req, res, next) => ...  // Handler
+      // path: path of the route
+      // - default: '/'
+      path: '/',
+      // method: method
+      // - default: 'GET'
+      // - available: 'GET', 'HEAD', 'PATCH', 'OPTIONS', 'CONNECT', 'DELETE', 'TRACE', 'POST', 'PUT'
+      method: 'GET',
+      // Before Handler
+      before: async (req, res, next) => ...,
+      // Main Handler
+      action: async (req, res, next) => ...
     },
   ],
 };
 ```
+
+The supported route pattern types are:
+
+- static (`/messages`)
+- named parameters (`/messages/:id`)
+- nested parameters (`/messages/:id/books/:title`)
+- optional parameters (`/messages/:id?/books/:title?`)
+- suffixed parameters (`/movies/:title.mp4`, `movies/:title.(mp4|mov)`)
+- any match / wildcards (`/messages/*`)
 
 > 📄 For more information - [polka](https://github.com/lukeed/polka) based on [trouter](https://github.com/lukeed/trouter).
 
@@ -152,6 +156,28 @@ module.exports = {
  curl http://localhost:3000/articles
  curl http://localhost:3000/comments
  ...
+```
+
+👩‍🔧 Available options:
+
+```javascript
+const loader = require("zowwu");
+
+loader({
+  // entry: the folder where routes are scanned for
+  // - default: 'api'
+  entry: 'api',
+   // debug: it shows you the generated routes on load
+   // - default: false
+  debug: true,
+  // pluginPath: the folder where plugins are scanned for
+  // - default 'plugins'
+  pluginPath: 'plugins',
+  // register: Initialize external modules. Similar to app.use(module)
+  // - default: []
+  register: []
+}).then(app => // return the polkajs instance
+
 ```
 
 #### Middlewares (Endpoint specific)
@@ -302,6 +328,24 @@ module.exports = {
     },
   ],
 };
+```
+
+<!-- MODULES -->
+
+## Modules
+
+Modules can be initialized using the register array.
+
+```javascript
+const loader = require("zowwu");
+const { json } = require("body-parser");
+
+loader({ register: [json()] }).then((app) => {
+  app.listen(3000, (err) => {
+    if (err) throw err;
+    console.log(`> Running on localhost:3000`);
+  });
+});
 ```
 
 <!-- ROADMAP -->

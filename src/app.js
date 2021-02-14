@@ -146,54 +146,68 @@ const load = (options, fullPath) =>
                          */
                         if (routes?.length) {
                             // assign information to route
-                            routes.forEach(
-                                ({
+                            routes.forEach((r) => {
+                                const {
                                     plugin = null,
                                     method = "GET",
                                     path = "/",
                                     before,
                                     action,
-                                }) => {
-                                    debug &&
-                                        console.log(
-                                            `${method.toUpperCase()} ${
-                                                treePath + path
-                                            }`
-                                        );
+                                } = r;
+                                debug &&
+                                    console.log(
+                                        `${method.toUpperCase()} ${
+                                            treePath + path
+                                        }`
+                                    );
 
-                                    // Load with plugin
-                                    if (plugin) {
-                                        let pluginValues;
-
-                                        if (
-                                            statSync(
-                                                `${pluginPath}${plugin}`
-                                            ).isDirectory()
-                                        ) {
-                                            pluginValues = require(`${pluginPath}${plugin}/index.js`);
-                                        } else {
-                                            pluginValues = require(`${pluginPath}${plugin}.js`);
-                                        }
-
-                                        app[pluginValues.method.toLowerCase()](
-                                            treePath + pluginValues.path ||
-                                                path,
-                                            before ||
-                                                pluginValues?.before ||
-                                                defaultAction,
-                                            action ||
-                                                pluginValues?.action ||
-                                                defaultAction
-                                        );
-                                    } else {
-                                        app[method.toLowerCase()](
-                                            treePath + path,
-                                            before || defaultAction,
-                                            action || defaultAction
-                                        );
+                                /**
+                                 * possibility to run several middlewares in a row
+                                 */
+                                const assignBefore = async (req, res, next) => {
+                                    // Check if not a array
+                                    if (before && typeof before !== "object") {
+                                        await before(req, res, next);
+                                        next();
+                                    } else if (before) {
+                                        r.before.forEach(async (b) => {
+                                            await b(req, res, next);
+                                        });
+                                        next();
                                     }
+                                };
+
+                                // Load with plugin
+                                if (plugin) {
+                                    let pluginValues;
+
+                                    if (
+                                        statSync(
+                                            `${pluginPath}${plugin}`
+                                        ).isDirectory()
+                                    ) {
+                                        pluginValues = require(`${pluginPath}${plugin}/index.js`);
+                                    } else {
+                                        pluginValues = require(`${pluginPath}${plugin}.js`);
+                                    }
+
+                                    app[pluginValues.method.toLowerCase()](
+                                        treePath + pluginValues.path || path,
+                                        assignBefore ||
+                                            pluginValues?.before ||
+                                            defaultAction,
+                                        action ||
+                                            pluginValues?.action ||
+                                            defaultAction
+                                    );
+                                } else {
+                                    app[method.toLowerCase()](
+                                        treePath + path,
+                                        assignBefore || defaultAction,
+                                        action || defaultAction
+                                    );
                                 }
-                            );
+                            });
                         }
                     }
                 }

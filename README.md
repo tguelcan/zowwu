@@ -124,15 +124,19 @@ module.exports = {
   routes: [
     {
       // path: path of the route
+      // - type: String
       // - default: '/'
       path: '/',
       // method: method
+      // - type: String
       // - default: 'GET'
       // - available: 'GET', 'HEAD', 'PATCH', 'OPTIONS', 'CONNECT', 'DELETE', 'TRACE', 'POST', 'PUT'
       method: 'GET',
       // Before Handler
+      // - type: Function | Array
       before: async (req, res, next) => ...,
       // Main Handler
+      // - type: String
       action: async (req, res, next) => ...
     },
   ],
@@ -143,12 +147,16 @@ The supported route pattern types are:
 
 - static (`/messages`)
 - named parameters (`/messages/:id`)
-- nested parameters (`/messages/:id/books/:title`)
-- optional parameters (`/messages/:id?/books/:title?`)
+- optional parameters (`/messages/:id?`)
 - suffixed parameters (`/movies/:title.mp4`, `movies/:title.(mp4|mov)`)
 - any match / wildcards (`/messages/*`)
 
-> 📄 For more information - [polka](https://github.com/lukeed/polka) based on [trouter](https://github.com/lukeed/trouter).
+Not supported pattern types are (if folder-specific is to be created):
+
+- deep nested parameters (`/messages/:id/books/:title`)
+- deep optional parameters (`/messages/:id?/books/:title?`)
+
+> However, within the route option (module.exports.routes) these route methods are possible. 📄 For more information - [polka](https://github.com/lukeed/polka) based on [trouter](https://github.com/lukeed/trouter).
 
 #### Now you can query
 
@@ -165,15 +173,19 @@ const loader = require("zowwu");
 
 loader({
   // entry: the folder where routes are scanned for
+  // - type: String
   // - default: 'api'
   entry: 'api',
    // debug: it shows you the generated routes on load
+  // - type: Boolean
    // - default: false
   debug: true,
   // pluginPath: the folder where plugins are scanned for
+  // - type: String
   // - default 'plugins'
   pluginPath: 'plugins',
   // register: Initialize external modules. Similar to app.use(module)
+  // - type: Array
   // - default: []
   register: []
 }).then(app => // return the polkajs instance
@@ -237,7 +249,7 @@ function two(req, res, next) {
 module.exports = {
   routes: [
     {
-      before: one,
+      before: [one, two],
       action: async (req, res, next) => {
         // Get Posts
         res.json([{ title: "Post..." }]);

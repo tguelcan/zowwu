@@ -1,3 +1,13 @@
+const firstMiddleware = (req, res, next) => {
+    console.log("first middleware");
+    next();
+};
+
+const secondMiddleware = (req, res, next) => {
+    console.log("second middleware");
+    next();
+};
+
 module.exports = {
     routes: [
         {
@@ -5,15 +15,9 @@ module.exports = {
         },
         {
             path: "/:id",
+            before: [firstMiddleware, secondMiddleware],
             action: async (req, res, next) => {
                 res.json({ status: req.params.id });
-            },
-        },
-        {
-            method: "POST",
-            path: "/:id",
-            action: async (req, res, next) => {
-                res.json({ status: req.body });
             },
         },
     ],

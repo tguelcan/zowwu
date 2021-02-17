@@ -34,11 +34,14 @@ const load = (options, fullPath) =>
         );
         // Register custom middlewares
         register?.length &&
-            register.forEach((r) => {
+            register.forEach((r, i) => {
                 if (modulesRegistred) return;
                 app.use(r);
-                debug && console.log("Module registred");
-                modulesRegistred = true;
+                // check if all modules registred
+                if (register.length == i + 1) {
+                    modulesRegistred = true;
+                    debug && console.log("Module registred");
+                }
             });
 
         if (!fullPath) {
